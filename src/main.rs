@@ -1,3 +1,5 @@
+mod vec3;
+
 use indicatif::ProgressIterator;
 use std::error::Error;
 use std::fs::File;
