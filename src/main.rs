@@ -1,4 +1,5 @@
 mod vec3;
+mod color;
 
 use indicatif::ProgressIterator;
 use std::error::Error;
@@ -6,6 +7,8 @@ use std::fs::File;
 use std::io::Write;
 use log::info;
 use log::LevelFilter;
+use crate::color::write_color;
+use crate::vec3::Vec3;
 
 fn main() -> Result<(), Box<dyn Error>>{
 
@@ -22,15 +25,13 @@ fn main() -> Result<(), Box<dyn Error>>{
 
     for j in (0..image_height).progress() {
         for i in 0..image_width {
-            let r = (i as f64) / ((image_width - 1) as f64);
-            let g = (j as f64) / ((image_height - 1) as f64);
-            let b = 0.0;
+            let pixel_color = Vec3::new(
+                (i as f64) / ((image_width - 1) as f64),
+                (j as f64) / ((image_height - 1) as f64),
+                0.0
+            );
 
-            let ir = (255.999 * r) as i32;
-            let ig = (255.999 * g) as i32;
-            let ib = (255.999 * b) as i32;
-
-            writeln!(image_file, "{ir} {ig} {ib}")?;
+           write_color(&mut image_file, pixel_color)?;
         }
     }
 
