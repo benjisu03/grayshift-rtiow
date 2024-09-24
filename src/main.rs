@@ -4,8 +4,14 @@ use indicatif::ProgressIterator;
 use std::error::Error;
 use std::fs::File;
 use std::io::Write;
+use log::info;
+use log::LevelFilter;
 
 fn main() -> Result<(), Box<dyn Error>>{
+
+    let mut logger = colog::default_builder();
+    logger.filter_level(LevelFilter::Trace);
+    logger.init();
 
     let mut image_file = File::create("image.ppm")?;
 
@@ -28,5 +34,6 @@ fn main() -> Result<(), Box<dyn Error>>{
         }
     }
 
+    info!("Done");
     Ok(())
 }
