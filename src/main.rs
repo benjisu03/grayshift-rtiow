@@ -6,18 +6,34 @@ use indicatif::ProgressIterator;
 use std::error::Error;
 use std::fs::File;
 use std::io::Write;
+use std::ops::Sub;
 use log::info;
 use log::LevelFilter;
 use crate::color::write_color;
 use crate::ray::Ray;
 use crate::vec3::Vec3;
 
-fn ray_color(ray: &Ray) -> Vec3 {
-    let blend = 0.5 * (ray.direction.unit().y + 1.0);
-    let white = Vec3::new(1.0, 1.0, 1.0);
-    let blue = Vec3::new(0.5, 0.7, 1.0);
+fn hit_sphere(center: &Vec3, radius: f64, ray: &Ray) -> bool {
+    let oc = center - ray.origin;
 
-    blend * blue + (1.0 - blend) * white
+    let a = ray.direction.dot(ray.direction);
+    let b = -2.0 * ray.direction.dot(oc);
+    let c = oc.dot(oc) - radius * radius;
+
+    let discriminant = b * b - 4.0 * a * c;
+    discriminant >= 0.0
+}
+
+fn ray_color(ray: &Ray) -> Vec3 {
+    if hit_sphere(&Vec3::new(0.0, 0.0, -1.0), 0.5, ray) {
+        return Vec3::new(1.0, 0.0, 0.0);
+    }
+
+    let blend = 0.5 * (ray.direction.unit().y + 1.0);
+    let sky_white = Vec3::new(1.0, 1.0, 1.0);
+    let sky_blue = Vec3::new(0.5, 0.7, 1.0);
+
+    blend * sky_white + (1.0 - blend) * sky_blue
 }
 
 fn main() -> Result<(), Box<dyn Error>>{
